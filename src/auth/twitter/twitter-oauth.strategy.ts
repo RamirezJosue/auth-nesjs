@@ -1,0 +1,42 @@
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Profile, Strategy } from 'passport-twitter';
+import { AuthService } from '../auth.service';
+import { RegisterAuthDto } from '../dto/register-auth.dto';
+
+@Injectable()
+export class TwitterOauthStrategy extends PassportStrategy(Strategy, 'twitter') {
+
+    constructor(
+        private readonly authService: AuthService
+    ) {
+        super({
+            consumerKey: 'T5VzV7vX4bJwWsOBMCKlxgTfT',
+            consumerSecret: 'SqWEnyE0Kx4anZ2XMa3OOsYqAlXTknd1hee0zGJkJsKgc3AO0D',
+            callbackURL: 'http://localhost:3000/api/auth/twitter/redirect',
+            includeEmail: true
+        });
+    }
+    async validate(accessToken: string, refreshToken: string, profile: Profile, done: any): Promise<any> {
+        const { id, displayName, photos, emails, provider } = profile;
+        // const user = {
+        //     email: emails[0].value,
+        //     firstName: displayName,
+        //     lastName: '',
+        //     picture: photos[0].value,
+        //     provider
+        //   }
+        let user = await this.authService.findOne({ email: emails[0].value });
+        const data: RegisterAuthDto = {
+            email: emails[0].value,
+            password: ":)",
+            firstName: displayName,
+            lastName: '',
+            picture: '',
+            provider,
+            role: 'USER',
+            providerId: id
+          };
+        done(null, user);
+    }
+}
