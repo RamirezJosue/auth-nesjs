@@ -12,6 +12,5 @@ export class RegisterAuthDto extends PartialType(LoginAuthDto) {
 
     role: string;
     picture: string;
-    provider: string;
-    providerId: string
+    providers: any;
 }

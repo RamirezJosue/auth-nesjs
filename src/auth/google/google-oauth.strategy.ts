@@ -5,7 +5,7 @@ import { AuthService } from '../auth.service';
 import { RegisterAuthDto } from '../dto/register-auth.dto';
 
 @Injectable()
-export class GoogleOauthStrategy  extends PassportStrategy(Strategy, 'google') {
+export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
     private readonly authService: AuthService
   ) {
@@ -19,23 +19,20 @@ export class GoogleOauthStrategy  extends PassportStrategy(Strategy, 'google') {
   async validate(accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback): Promise<any> {
     try {
       const { id, name, emails, photos, provider } = profile;
-
-      let user = await this.authService.findOne({email: emails[0].value});
+      let user: any = await this.authService.findOne({ email: emails[0].value });
       const data: RegisterAuthDto = {
         email: emails[0].value,
         password: ":)",
         firstName: name.givenName,
         lastName: name.familyName,
         picture: photos[0].value,
-        provider,
         role: 'USER',
-        providerId: id
+        providers: [{
+          name: provider,
+          id
+        }]
       };
-
-      if (!user) {
-       user = await this.authService.register(data);
-      }
-      
+      user ? await this.authService.provider(user, id, provider): user = await this.authService.register(data);
       done(null, user);
     } catch (error) {
       done(error, false);

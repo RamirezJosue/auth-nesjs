@@ -24,13 +24,13 @@ export class AuthService {
     async findOne(params: any) {
         return await this.userModel.findOne(params)
     }
-    
+
     async validateUser(email: string, password: string) {
-        const user = await this.findOne({email});
+        const user = await this.findOne({ email });
         if (user) {
             const isMatch = await bcrypt.compare(password, user.password);
             if (isMatch) {
-                const { password, ...result  } = user.toJSON();
+                const { password, ...result } = user.toJSON();
                 return result;
             }
         }
@@ -49,7 +49,7 @@ export class AuthService {
         const { refresh_token, access_token } = await this.getTokens(payload);
         const expiration = new Date();
         expiration.setDate(expiration.getDate() + 7);
-        await this.tokenModel.create({ token: refresh_token, expiration, user: payload.uid})
+        await this.tokenModel.create({ token: refresh_token, expiration, user: payload.uid })
         res.status(200);
         res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
@@ -79,16 +79,16 @@ export class AuthService {
     }
 
     async register(userObject: RegisterAuthDto) {
-        if (!userObject.providerId) {
+        if (!userObject.providers) {
             const { password } = userObject;
             const plainToHash = bcrypt.hashSync(password, 10);
-            userObject = { ...userObject, password: plainToHash};
+            userObject = { ...userObject, password: plainToHash };
         }
         return this.userModel.create(userObject);
     }
 
     async logout(token: string, res: Response) {
-        await this.tokenModel.deleteOne({token});
+        await this.tokenModel.deleteOne({ token });
         res.clearCookie('refresh_token');
         res.clearCookie('access_token');
         return {
@@ -97,7 +97,7 @@ export class AuthService {
     }
 
     async refresh(token: string, res: Response) {
-        const { uid } = await this.jwtService.verify(token, {secret: this.configService.rtKey});
+        const { uid } = await this.jwtService.verify(token, { secret: this.configService.rtKey });
         const tokenEntity = await this.tokenModel.findOne({
             user: uid,
             expiration: { $gte: Date.now() }
@@ -119,6 +119,17 @@ export class AuthService {
         return {
             message: 'success'
         };
-    }  
+    }
+
+    async provider(user: any, id: string, provider: string) {
+        const data = user.providers.some(value => value.id === id);
+        if (!data) {
+            const pro: any = { name: provider,  id};
+            await this.userModel.findOneAndUpdate(
+                { _id: user._id }, 
+                { $push: { providers: pro } }
+            )
+        }
+    }
 
 }

@@ -32,15 +32,13 @@ export class FacebookOauthStrategy extends PassportStrategy(Strategy, 'facebook'
       firstName: name.givenName,
       lastName: name.familyName,
       picture: photos[0].value,
-      provider,
       role: 'USER',
-      providerId: id
+      providers: [{
+        name: provider,
+        id
+      }]
     };
-
-    if (!user) {
-     user = await this.authService.register(data);
-    }
-
+    user ? await this.authService.provider(user, id, provider): user = await this.authService.register(data);
     done(null, user);
   }
 }

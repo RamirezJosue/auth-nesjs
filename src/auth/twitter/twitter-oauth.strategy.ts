@@ -26,14 +26,13 @@ export class TwitterOauthStrategy extends PassportStrategy(Strategy, 'twitter') 
             firstName: displayName,
             lastName: '',
             picture: '',
-            provider,
             role: 'USER',
-            providerId: id
+            providers: [{
+                name: provider,
+                id
+            }]
         };
-
-        if (!user) {
-            user = await this.authService.register(data);
-        }
+        user ? await this.authService.provider(user, id, provider): user = await this.authService.register(data);
         done(null, user);
     }
 }

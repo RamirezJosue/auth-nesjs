@@ -25,13 +25,13 @@ export class MicrosoftOauthStrategy extends PassportStrategy(Strategy, 'microsof
       firstName: name.givenName,
       lastName: name.familyName,
       picture: '',
-      provider,
       role: 'USER',
-      providerId: id
+      providers: [{
+        name: provider,
+        id
+      }]
     };
-    if (!user) {
-      user = await this.authService.register(data);
-    }
+    user ? await this.authService.provider(user, id, provider): user = await this.authService.register(data);
     done(null, user);
   }
 }
