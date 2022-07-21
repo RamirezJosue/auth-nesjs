@@ -12,6 +12,8 @@ import { MicrosoftOauthStrategy } from './microsoft/microsoft-oauth.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
+import { TwitterOauthController } from './twitter/twitter-oauth.controller';
+import { TwitterOauthStrategy } from './twitter/twitter-oauth.strategy';
 
 @Module({
     imports: [
@@ -22,7 +24,8 @@ import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
         AuthController,
         GoogleOauthController,
         FacebookOauthController,
-        MicrosoftOauthController
+        MicrosoftOauthController,
+        TwitterOauthController
     ],
     providers: [
         AuthService,
@@ -31,7 +34,8 @@ import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
         RefreshTokenStrategy,
         GoogleOauthStrategy,
         FacebookOauthStrategy,
-        MicrosoftOauthStrategy 
+        MicrosoftOauthStrategy,
+        TwitterOauthStrategy 
     ]
 })
 export class AuthModule { }

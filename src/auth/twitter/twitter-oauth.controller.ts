@@ -4,7 +4,7 @@ import { AuthService } from '../auth.service';
 import { TwitterOauthGuard } from './twitter-oauth.guard';
 
 @Controller('auth/twitter')
-export class MicrosoftOauthController {
+export class TwitterOauthController {
   constructor(
     private readonly authService: AuthService
   ) {}

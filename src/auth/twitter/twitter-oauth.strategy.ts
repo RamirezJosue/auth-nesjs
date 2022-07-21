@@ -19,13 +19,6 @@ export class TwitterOauthStrategy extends PassportStrategy(Strategy, 'twitter') 
     }
     async validate(accessToken: string, refreshToken: string, profile: Profile, done: any): Promise<any> {
         const { id, displayName, photos, emails, provider } = profile;
-        // const user = {
-        //     email: emails[0].value,
-        //     firstName: displayName,
-        //     lastName: '',
-        //     picture: photos[0].value,
-        //     provider
-        //   }
         let user = await this.authService.findOne({ email: emails[0].value });
         const data: RegisterAuthDto = {
             email: emails[0].value,
@@ -36,7 +29,11 @@ export class TwitterOauthStrategy extends PassportStrategy(Strategy, 'twitter') 
             provider,
             role: 'USER',
             providerId: id
-          };
+        };
+
+        if (!user) {
+            user = await this.authService.register(data);
+        }
         done(null, user);
     }
 }
