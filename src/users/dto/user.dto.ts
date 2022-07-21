@@ -5,14 +5,23 @@ export class UserDto {
     _id: string;
     
     @IsNotEmpty()
-    name: string;
+    firstName: string;
 
+    @IsNotEmpty()
+    lastName: string;
+
+    @IsNotEmpty()
     @IsEmail()
     email: string;
 
-    @MinLength(4)
-    @MaxLength(12)
+    @IsNotEmpty()
     password: string;
 
     role: string;
+
+    picture: string;
+    
+    provider: string;
+
+    providerId: string
 }

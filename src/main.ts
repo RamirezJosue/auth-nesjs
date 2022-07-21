@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as csurf from 'csurf';
 import * as cookieParser from 'cookie-parser';
+import * as session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,6 +26,14 @@ async function bootstrap() {
   SwaggerModule.setup('documentation',app, document);
   app.use(
     cookieParser(),
+    session({
+      cookie: {
+        maxAge: 86400000,
+      },
+      secret: 'sfjsenfnjksefnjksenjkfsenjkfnjksen',
+      resave: false,
+      saveUninitialized: false
+    })
   );
   app.useGlobalPipes(new ValidationPipe);
   // app.use(csurf());

@@ -5,6 +5,13 @@ import { LoginAuthDto } from './login-auth.dto';
 export class RegisterAuthDto extends PartialType(LoginAuthDto) {
 
     @IsNotEmpty()
-    name: string;
-    
+    firstName: string;
+
+    @IsNotEmpty()
+    lastName: string;
+
+    role: string;
+    picture: string;
+    provider: string;
+    providerId: string
 }
